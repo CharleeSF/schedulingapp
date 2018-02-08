@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CommentRemoveConfirmation from './comment-remove-confirmation';
+import CommentConfirmation from './comment-confirmation';
 
 export default class Comment extends React.Component {
   constructor() {
@@ -14,11 +14,14 @@ export default class Comment extends React.Component {
   render() {
 
     let commentBody;
+    let abuseMessage;
 
     if (!this.state.isAbusive) {
       commentBody = this.props.body;
+      abuseMessage = "Report Abuse";
     } else {
       commentBody = <em>Content marked as abusive</em>;
+      abuseMessage = "Take back reporting abuse";
     }
 
     return(
@@ -30,16 +33,22 @@ export default class Comment extends React.Component {
         <p className="comment-body">{commentBody}</p>
 
         <div className="comment-actions">
-          <CommentRemoveConfirmation onDelete={this._handleDelete.bind(this)} />
-          <a href="#" onClick={this._toggleAbuse.bind(this)}>Report as Abuse</a>
+          <CommentConfirmation 
+            onConfirm={this._handleDelete.bind(this)}
+            confirmDelete={true}>
+            Delete Message
+          </CommentConfirmation>
+          <CommentConfirmation 
+            onConfirm={this._toggleAbuse.bind(this)} 
+            confirmDelete={false}>
+            {abuseMessage}
+          </CommentConfirmation>
         </div>
       </div>
     );
   }
 
-  _toggleAbuse(event) {
-    event.preventDefault();
-
+  _toggleAbuse() {
     this.setState({
       isAbusive: !this.state.isAbusive
     });
